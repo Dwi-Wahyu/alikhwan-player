@@ -86,8 +86,9 @@
 	}
 </script>
 
-{#if !dataKomentar}
-	<div class="flex h-40 w-full justify-center text-center">
+{#if !dataKomentar.length}
+	<div class="flex w-full justify-center gap-2 text-center">
+		<img src="/icons/empty.svg" alt="" />
 		<h1 class="text-lg font-semibold">Belum Ada Komentar</h1>
 	</div>
 {/if}

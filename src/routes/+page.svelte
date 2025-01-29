@@ -33,7 +33,9 @@
 		if (audioElement) {
 			audioElement.volume = volume;
 		}
+	});
 
+	$effect(() => {
 		if (form?.success) {
 			toast.success('Berhasil Menambahkan Komentar', { position: 'bottom-right' });
 			myModal.close();
