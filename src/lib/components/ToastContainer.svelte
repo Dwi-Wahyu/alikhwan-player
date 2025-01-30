@@ -20,7 +20,7 @@
 				props: { nama, isi },
 				position: 'top-right'
 			});
-		}, 4000);
+		}, 5000);
 	}
 
 	onMount(() => {

@@ -4,12 +4,11 @@
 	import type { PageProps } from './$types';
 
 	import toast, { Toaster } from 'svelte-5-french-toast';
-	import ToastContainer from '$lib/components/ToastContainer.svelte';
 
 	let myModal: HTMLDialogElement;
 
 	let audioElement: HTMLAudioElement;
-	let streamURL = 'https://stream.radioparadise.com/mp3-192';
+	let streamURL = 'https://stream.radioalikhwan.com';
 
 	let play = $state(false);
 
@@ -37,7 +36,7 @@
 
 	$effect(() => {
 		if (form?.success) {
-			toast.success('Berhasil Menambahkan Komentar', { position: 'bottom-right' });
+			toast.success('Berhasil Menambahkan Komentar', { position: 'top-center' });
 			myModal.close();
 		}
 	});
@@ -51,39 +50,17 @@
 			play = true;
 		}
 	}
-
-	let showToastContainer = $state(true);
-
-	function checkScreenWidth() {
-		if (typeof window !== 'undefined') {
-			showToastContainer = window.innerWidth >= 640;
-		}
-	}
-
-	checkScreenWidth();
-
-	$effect(() => {
-		if (typeof window !== 'undefined') {
-			// Ensure this runs only in the browser
-			window.addEventListener('resize', checkScreenWidth);
-			return () => {
-				window.removeEventListener('resize', checkScreenWidth);
-			};
-		}
-	});
 </script>
 
 <Toaster />
 
-<audio bind:this={audioElement} src="https://stream.radioparadise.com/mp3-192"></audio>
-
-{#if showToastContainer}
-	<ToastContainer allComment={data.allComment} />
-{/if}
+<audio bind:this={audioElement} src="https://stream.radioalikhwan.com"></audio>
 
 <div class="relative h-svh w-full bg-[url('/backgrounds/bg2.png')] bg-cover bg-center text-white">
 	<!-- Header -->
-	<div class="absolute left-0 top-0 z-10 h-svh w-full bg-black/40 p-9 pt-5">
+	<div class="absolute left-0 top-0 z-10 h-svh w-full bg-black/40 p-9 pt-5"></div>
+
+	<div class="absolute left-0 top-0 z-20 flex h-full w-full flex-col justify-evenly p-10 pt-5">
 		<div class="flex justify-between">
 			<a href="https://radioalikhwan.com/">
 				<img src="/icons/leave.svg" class="w-5" alt="" />
@@ -93,73 +70,92 @@
 			</div>
 		</div>
 
-		<div class="flex h-full w-full items-center justify-center sm:hidden">
-			<div class="mb-20 h-64 w-64 rounded-full bg-white/30 p-3">
-				<div
-					class="mb-32 flex h-full w-full items-center justify-center rounded-full bg-white shadow"
-				>
+		<div class=" flex h-full w-full flex-col items-center justify-center gap-5">
+			<div class="h-64 w-64 rounded-full bg-white/30 p-3">
+				<div class=" flex h-full w-full items-center justify-center rounded-full bg-white shadow">
 					<img src="/logo/logo-alikhwan-nobg.png" class="w-52" alt="" />
 				</div>
 			</div>
+
+			<h1 class="text-center text-[1.5rem] font-extrabold sm:text-[2rem] sm:font-bold">
+				Radio Al-Ikhwan 101,9 FM Makassar
+			</h1>
+
+			<div class="flex gap-4">
+				<a
+					href="https://www.facebook.com/RadioAlikhwanMakassar?locale=id_ID"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<img src="/icons/facebook.svg" alt="Facebook" />
+				</a>
+				<a
+					href="https://www.instagram.com/fmraimakassar?igsh=ejJiYTF4bW5pOHVj"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<img src="/icons/instagram.svg" alt="Instagram" />
+				</a>
+
+				<a href="https://www.tiktok.com/@radioalikhwan" target="_blank" rel="noopener noreferrer">
+					<img src="/icons/tiktok.svg" alt="" />
+				</a>
+
+				<a href="https://www.youtube.com/@RadioAlIkwan" target="_blank" rel="noopener noreferrer">
+					<img src="/icons/youtube.svg" alt="" />
+				</a>
+			</div>
 		</div>
-	</div>
 
-	<!-- Konten Utama -->
-	<div class="absolute z-20 flex h-full w-full items-end">
-		<div class="flex w-full flex-col gap-5 p-10">
-			<!-- Judul dan Logo -->
-			<div class="hidden items-center gap-3 sm:flex">
-				<img src="/logo/alikhwan-player-white.png" class="w-[4rem]" alt="" />
-				<div>
-					<h1 class="text-2xl font-bold">Radio Al-Ikhwan 101,9 FM Makassar</h1>
-					<h1 class="text-xl font-semibold">radio al ikhwan jingle (1)</h1>
+		<!-- Konten Utama -->
+		<div class="flex w-full items-end">
+			<div class="flex w-full flex-col gap-5">
+				<!-- Kontrol Volume -->
+				<div class="flex w-full items-center justify-between gap-3">
+					<button onmousedown={decreaseVolume}>
+						<img src="/icons/volumedown.svg" class="w-10" alt="" />
+					</button>
+
+					<input
+						type="range"
+						min={0}
+						max={1}
+						step={0.01}
+						bind:value={volume}
+						class="range range-xs bg-gray-300"
+					/>
+
+					<button onmousedown={increaseVolume}>
+						<img src="/icons/volumeup.svg" class="w-10" alt="" />
+					</button>
 				</div>
-			</div>
 
-			<!-- Kontrol Volume -->
-			<div class="flex w-full items-center justify-between gap-3">
-				<button onmousedown={decreaseVolume}>
-					<img src="/icons/volumedown.svg" class="w-10" alt="" />
-				</button>
+				<!-- Kontrol Pemutar -->
+				<div class="flex w-full items-center justify-between">
+					<img src="/icons/volumex.svg" class="w-7" alt="" />
 
-				<input
-					type="range"
-					min={0}
-					max={1}
-					step={0.01}
-					bind:value={volume}
-					class="range range-xs bg-gray-300"
-				/>
+					<button onclick={togglePlay}>
+						{#if play}
+							<img src="/icons/stop.svg" class="w-10" alt="" />
+						{:else}
+							<img src="/icons/play.svg" class="w-10" alt="" />
+						{/if}
+					</button>
 
-				<button onmousedown={increaseVolume}>
-					<img src="/icons/volumeup.svg" class="w-10" alt="" />
-				</button>
-			</div>
-
-			<!-- Kontrol Pemutar -->
-			<div class="flex w-full items-center justify-between">
-				<img src="/icons/volumex.svg" class="w-7" alt="" />
-
-				<button onclick={togglePlay}>
-					{#if play}
-						<img src="/icons/stop.svg" class="w-10" alt="" />
-					{:else}
-						<img src="/icons/play.svg" class="w-10" alt="" />
-					{/if}
-				</button>
-
-				<button onclick={openModal}>
-					<img src="/icons/comment.svg" class="w-7" alt="" />
-				</button>
+					<button onclick={openModal}>
+						<img src="/icons/comment.svg" class="w-7" alt="" />
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="flex w-full flex-col gap-2 bg-[#1B1B1B] p-10 text-white sm:hidden">
-	<h1 class=" mb-2 text-xl font-semibold">Komentar</h1>
-
-	<Comment dataKomentar={data.allComment} />
+<div class="flex w-full flex-col gap-2 bg-[#1B1B1B] p-10 text-white md:px-72">
+	<div class="rounded-xl border-[#D00300] md:border-2 md:px-5 md:py-4">
+		<h1 class=" mb-2 text-center text-xl font-semibold">Komentar</h1>
+		<Comment dataKomentar={data.allComment} />
+	</div>
 </div>
 
 <!-- Modal -->

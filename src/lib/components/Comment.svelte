@@ -94,7 +94,7 @@
 {/if}
 
 {#each dataKomentar as komentar}
-	<div class="flex items-center justify-between pb-2">
+	<div class="mt-2 flex items-center justify-between pb-2">
 		<div class="flex items-center gap-3">
 			<div>
 				<div class="mb-1">
@@ -133,14 +133,16 @@
 	</div>
 
 	{#if komentar.subkomentar.length && !showReply.includes(komentar.id)}
-		<button class="text-sm" onclick={() => toggleShowReply(komentar.id)}>
-			Show {komentar.subkomentar.length} replies
-		</button>
+		<div class="w-full pl-5 sm:pl-10">
+			<button class="text-sm" onclick={() => toggleShowReply(komentar.id)}>
+				Show {komentar.subkomentar.length} replies
+			</button>
+		</div>
 	{/if}
 
 	{#if showReply.includes(komentar.id)}
 		{#each komentar.subkomentar as subkomentar}
-			<div class="flex items-center justify-between pb-2 pl-5">
+			<div class="flex items-center justify-between pb-2 pl-5 sm:pl-10">
 				<div class="flex items-center gap-3">
 					<div>
 						<div class="mb-1">
