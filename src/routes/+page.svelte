@@ -19,6 +19,12 @@
 	}
 
 	function toggleMute() {
+		if (mute) {
+			volume = 0;
+		} else {
+			volume = 1;
+		}
+
 		mute = !mute;
 	}
 
@@ -32,12 +38,6 @@
 	$effect(() => {
 		if (audioElement) {
 			audioElement.volume = volume;
-		}
-
-		if (mute) {
-			volume = 0;
-		} else {
-			volume = 1;
 		}
 	});
 
