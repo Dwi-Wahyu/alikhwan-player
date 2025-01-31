@@ -1,10 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import Comment from '$lib/components/Comment.svelte';
-	import type { PageProps } from './$types';
-
-	import toast, { Toaster } from 'svelte-5-french-toast';
-
 	let myModal: HTMLDialogElement;
 
 	let audioElement: HTMLAudioElement;
@@ -14,9 +8,7 @@
 
 	let volume = $state(1);
 
-	function openModal() {
-		myModal?.showModal();
-	}
+	let mute = $state(false);
 
 	function decreaseVolume() {
 		volume = Math.max(0, volume - 0.1);
@@ -26,18 +18,26 @@
 		volume = Math.min(1, volume + 0.1);
 	}
 
-	let { data, form }: PageProps = $props();
+	function toggleMute() {
+		mute = !mute;
+	}
+
+	function showComment() {
+		const element = document.getElementById('comments');
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
 
 	$effect(() => {
 		if (audioElement) {
 			audioElement.volume = volume;
 		}
-	});
 
-	$effect(() => {
-		if (form?.success) {
-			toast.success('Berhasil Menambahkan Komentar', { position: 'top-center' });
-			myModal.close();
+		if (mute) {
+			volume = 0;
+		} else {
+			volume = 1;
 		}
 	});
 
@@ -51,8 +51,6 @@
 		}
 	}
 </script>
-
-<Toaster />
 
 <audio bind:this={audioElement} src="https://stream.radioalikhwan.com"></audio>
 
@@ -81,7 +79,7 @@
 				Radio Al-Ikhwan 101,9 FM Makassar
 			</h1>
 
-			<div class="flex gap-4">
+			<div class="mb-3 flex gap-4">
 				<a
 					href="https://www.facebook.com/RadioAlikhwanMakassar?locale=id_ID"
 					target="_blank"
@@ -101,7 +99,11 @@
 					<img src="/icons/tiktok.svg" alt="" />
 				</a>
 
-				<a href="https://www.youtube.com/@RadioAlIkwan" target="_blank" rel="noopener noreferrer">
+				<a
+					href="https://www.facebook.com/sharer/sharer.php?u=https://play.radioalikhwan.com/"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<img src="/icons/youtube.svg" alt="" />
 				</a>
 			</div>
@@ -122,7 +124,7 @@
 						max={1}
 						step={0.01}
 						bind:value={volume}
-						class="range range-xs bg-gray-300"
+						class="w-full bg-gray-300"
 					/>
 
 					<button onmousedown={increaseVolume}>
@@ -131,8 +133,14 @@
 				</div>
 
 				<!-- Kontrol Pemutar -->
-				<div class="flex w-full items-center justify-between">
-					<img src="/icons/volumex.svg" class="w-7" alt="" />
+				<div class="mb-3 flex w-full items-center justify-center gap-8">
+					<button onclick={toggleMute}>
+						{#if volume == 0}
+							<img src="/icons/unmute.svg" class="w-7" alt="" />
+						{:else}
+							<img src="/icons/mute.svg" class="w-7" alt="" />
+						{/if}
+					</button>
 
 					<button onclick={togglePlay}>
 						{#if play}
@@ -142,7 +150,7 @@
 						{/if}
 					</button>
 
-					<button onclick={openModal}>
+					<button onclick={showComment}>
 						<img src="/icons/comment.svg" class="w-7" alt="" />
 					</button>
 				</div>
@@ -150,49 +158,3 @@
 		</div>
 	</div>
 </div>
-
-<div class="flex w-full flex-col gap-2 bg-[#1B1B1B] p-10 text-white md:px-72">
-	<div class="rounded-xl border-[#D00300] md:border-2 md:px-5 md:py-4">
-		<h1 class=" mb-2 text-center text-xl font-semibold">Komentar</h1>
-		<Comment dataKomentar={data.allComment} />
-	</div>
-</div>
-
-<!-- Modal -->
-<dialog bind:this={myModal} id="my_modal_3" class="modal modal-bottom sm:modal-middle">
-	<div class="modal-box">
-		<form method="dialog">
-			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-		</form>
-		<form action="?/postKomentar" method="POST" class="mt-3 flex w-full flex-col gap-3" use:enhance>
-			<h1 class="text-center text-xl font-bold">Tambahkan Komentar</h1>
-			<div>
-				<label for="nama" class="mb-2 block font-semibold">Nama</label>
-				<input
-					type="text"
-					id="nama"
-					name="nama"
-					placeholder="Ketik Nama"
-					class="input input-bordered w-full text-sm"
-				/>
-				{#if form?.nama_kosong}<p class="mt-1 text-sm font-semibold text-red-600">
-						Mohon isi nama anda
-					</p>{/if}
-			</div>
-			<div>
-				<label for="komentar" class="mb-2 block font-semibold">Komentar</label>
-				<textarea
-					name="isi"
-					id="komentar"
-					class="textarea textarea-bordered w-full"
-					placeholder="Ketik Komentar"
-				></textarea>
-				{#if form?.komentar_kosong}<p class="text-sm font-semibold text-red-600">
-						Mohon isi komentar anda
-					</p>{/if}
-			</div>
-
-			<button type="submit" class="btn btn-neutral">Submit</button>
-		</form>
-	</div>
-</dialog>
