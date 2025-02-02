@@ -98,3 +98,8 @@ model struktur {
   gambar    String
   deskripsi String
 }
+
+model pendengar_online {
+  id     String @id
+  jumlah Int    @default(0)
+}
