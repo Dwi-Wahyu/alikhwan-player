@@ -5,10 +5,8 @@
 	let socket = io(env.PUBLIC_WS_HOST);
 
 	let audioElement: HTMLAudioElement;
-	import type { PageProps } from './$types';
 	import { onDestroy, onMount } from 'svelte';
 
-	let { data }: PageProps = $props();
 	let totalListener = $state(0);
 
 	let play = $state(false);

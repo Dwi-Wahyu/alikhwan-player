@@ -24,6 +24,17 @@ async function initializeTotalListeners() {
 		}
 	});
 	totalListeners = onlineUser?.jumlah || 0;
+
+	if (!onlineUser) {
+		const createRow = await prisma.pendengar_online.create({
+			data: {
+				id: 'jumlah',
+				jumlah: 0
+			}
+		});
+
+		totalListeners = createRow.jumlah;
+	}
 }
 
 // Handle koneksi Socket.IO
