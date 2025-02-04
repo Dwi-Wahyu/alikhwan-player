@@ -10,5 +10,14 @@ export default defineConfig({
 
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
+	},
+
+	server: {
+		proxy: {
+			'/socket.io': {
+				target: 'http://localhost:3000', // Sesuaikan dengan URL server Socket.IO
+				ws: true // Izinkan WebSocket
+			}
+		}
 	}
 });

@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { browser } from '$app/environment';
+	import { io } from 'socket.io-client';
+	import { env } from '$env/dynamic/public';
+
+	let socket = io(env.PUBLIC_WS_HOST);
 
 	let audioElement: HTMLAudioElement;
 	import type { PageProps } from './$types';
+	import { onDestroy, onMount } from 'svelte';
 
 	let { data }: PageProps = $props();
+	let totalListener = $state(0);
 
 	let play = $state(false);
 	let volume = $state(1);
@@ -46,14 +50,21 @@
 		}
 	}
 
-	function sendExitData() {
-		const fetchRequest = fetch('/api/onleave', {
-			method: 'POST'
+	onMount(() => {
+		socket.on('total listener', (total: number) => {
+			totalListener = total;
+			console.log(total);
 		});
-	}
-</script>
 
-<svelte:window on:beforeunload={sendExitData} />
+		socket.emit('add online user');
+	});
+
+	onDestroy(() => {
+		if (socket) {
+			socket.disconnect();
+		}
+	});
+</script>
 
 <audio bind:this={audioElement} src="https://stream.radioalikhwan.com"></audio>
 
@@ -147,12 +158,10 @@
 						</button>
 					</div>
 
-					{#if data.jumlahPendengar}
-						<div class="flex items-center gap-1">
-							<img src="/icons/online-user.svg" alt="Pendengar" />
-							<h1>{data.jumlahPendengar}</h1>
-						</div>
-					{/if}
+					<div class="flex items-center gap-1">
+						<img src="/icons/online-user.svg" alt="Pendengar" />
+						<h1>{totalListener}</h1>
+					</div>
 				</div>
 			</div>
 		</div>
