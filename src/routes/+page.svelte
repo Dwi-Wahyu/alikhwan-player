@@ -48,14 +48,25 @@
 		}
 	}
 
-	socket.emit('add online user');
+	onMount(() => {
+		const hasVisited = sessionStorage.getItem('hasVisited');
 
-	socket.on('total listener', (total: number) => {
-		totalListener = total;
-	});
+		if (!hasVisited) {
+			socket.emit('add online user');
+			sessionStorage.setItem('hasVisited', 'true');
+		}
 
-	socket.on('connect_error', (err) => {
-		console.error('Socket connection error:', err);
+		socket.on('total listener', (total: number) => {
+			totalListener = total;
+		});
+
+		socket.on('connect_error', (err) => {
+			console.error('Socket connection error:', err);
+		});
+
+		window.addEventListener('beforeunload', () => {
+			sessionStorage.removeItem('hasVisited');
+		});
 	});
 
 	onDestroy(() => {
