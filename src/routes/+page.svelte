@@ -49,15 +49,19 @@
 	}
 
 	onMount(() => {
-		socket.emit('add online user');
+		if (socket) {
+			socket.emit('add online user');
 
-		socket.on('total listener', (total: number) => {
-			totalListener = total;
-		});
+			socket.on('total listener', (total: number) => {
+				totalListener = total;
+			});
+		}
 	});
 
 	onDestroy(() => {
-		socket.disconnect();
+		if (socket) {
+			socket.disconnect();
+		}
 	});
 </script>
 
