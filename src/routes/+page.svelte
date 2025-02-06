@@ -2,7 +2,7 @@
 	import { io } from 'socket.io-client';
 	import { env } from '$env/dynamic/public';
 
-	let socket = io(env.PUBLIC_WS_HOST);
+	let socket = io();
 
 	let audioElement: HTMLAudioElement;
 	import { onDestroy, onMount } from 'svelte';
