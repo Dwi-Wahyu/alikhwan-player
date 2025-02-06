@@ -57,9 +57,7 @@
 	});
 
 	onDestroy(() => {
-		if (socket) {
-			socket.disconnect();
-		}
+		socket.disconnect();
 	});
 </script>
 
