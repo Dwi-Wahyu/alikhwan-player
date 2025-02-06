@@ -19,16 +19,22 @@ let totalListeners = 0;
 io.on('connection', async (socket) => {
 	socket.emit('total listener', totalListeners);
 
-	console.log(totalListeners);
-
 	socket.on('add online user', async () => {
 		totalListeners += 1;
+
+		console.log(totalListeners);
 
 		io.emit('total listener', totalListeners);
 	});
 
 	socket.on('disconnect', async () => {
 		totalListeners -= 1;
+
+		if (totalListeners < 0) {
+			totalListeners = 0;
+		}
+
+		console.log(totalListeners);
 
 		io.emit('total listener', totalListeners);
 	});
