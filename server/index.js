@@ -21,7 +21,7 @@ io.on('connection', async (socket) => {
 	socket.on('add online user', async () => {
 		totalListeners += 1;
 
-		console.log('Jumlah Pendengar : ' + totalListeners);
+		console.log('Menambahkan Jumlah Pendengar : ' + totalListeners);
 
 		io.emit('total listener', totalListeners);
 	});
@@ -33,7 +33,7 @@ io.on('connection', async (socket) => {
 			totalListeners = 0;
 		}
 
-		console.log('Jumlah Pendengar : ' + totalListeners);
+		console.log('Mengurangi Jumlah Pendengar : ' + totalListeners);
 
 		io.emit('total listener', totalListeners);
 	});

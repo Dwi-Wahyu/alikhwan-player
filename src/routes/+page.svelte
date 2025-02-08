@@ -49,23 +49,13 @@
 	}
 
 	onMount(() => {
-		const hasVisited = sessionStorage.getItem('hasVisited');
-
-		if (!hasVisited) {
-			socket.emit('add online user');
-			sessionStorage.setItem('hasVisited', 'true');
-		}
-
+		socket.emit('add online user');
 		socket.on('total listener', (total: number) => {
 			totalListener = total;
 		});
 
-		socket.on('connect_error', (err) => {
-			console.error('Socket connection error:', err);
-		});
-
 		window.addEventListener('beforeunload', () => {
-			sessionStorage.removeItem('hasVisited');
+			socket.disconnect();
 		});
 	});
 
