@@ -157,7 +157,7 @@
 					</div>
 
 					<div class="flex items-center gap-3">
-						<a href="https://wa.link/u0mqca" target="_blank">
+						<a href="https://wa.link/ahx3qj" target="_blank">
 							<img src="/icons/whatsapp.svg" alt="" />
 						</a>
 
