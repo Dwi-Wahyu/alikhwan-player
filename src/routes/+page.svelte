@@ -156,9 +156,15 @@
 						</button>
 					</div>
 
-					<div class="flex items-center gap-1">
-						<img src="/icons/online-user.svg" alt="Pendengar" />
-						<h1>{totalListener}</h1>
+					<div class="flex items-center gap-3">
+						<a href="https://wa.link/u0mqca" target="_blank">
+							<img src="/icons/whatsapp.svg" alt="" />
+						</a>
+
+						<div class="flex items-center gap-1">
+							<img src="/icons/online-user.svg" alt="Pendengar" />
+							<h1>{totalListener}</h1>
+						</div>
 					</div>
 				</div>
 			</div>
