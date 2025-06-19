@@ -1,17 +1,62 @@
 <script lang="ts">
 	import { io } from 'socket.io-client';
-	import { env } from '$env/dynamic/public';
+	import { onDestroy, onMount } from 'svelte';
 
 	let socket = io();
 
 	let audioElement: HTMLAudioElement;
-	import { onDestroy, onMount } from 'svelte';
 
 	let totalListener = $state(0);
-
 	let play = $state(false);
 	let volume = $state(1);
 	let mute = $state(false);
+
+	let currentArtist = $state('Unknown Artist');
+	let currentTitle = $state('Unknown Title');
+
+	let fetchInterval: number;
+
+	async function fetchNowPlaying() {
+		try {
+			const response = await fetch(
+				'https://stream.radioalikhwan.com/listen/al_ikhwan_fm/status-json.xsl'
+			);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			const data = await response.json();
+
+			// Pastikan data yang kita butuhkan ada
+			if (data.icestats && data.icestats.source && data.icestats.source.length > 0) {
+				// Asumsi source pertama adalah stream utama
+				const mainSource = data.icestats.source[0];
+				if (mainSource.artist && mainSource.title) {
+					currentArtist = mainSource.artist;
+					currentTitle = mainSource.title;
+				} else if (mainSource.yp_currently_playing) {
+					// Fallback jika artist dan title terpisah tidak ada, gunakan yp_currently_playing
+					const parts = mainSource.yp_currently_playing.split(' - ');
+					if (parts.length >= 2) {
+						currentArtist = parts[0];
+						currentTitle = parts.slice(1).join(' - ');
+					} else {
+						currentArtist = 'Unknown Artist';
+						currentTitle = mainSource.yp_currently_playing;
+					}
+				} else {
+					currentArtist = 'Unknown Artist';
+					currentTitle = 'No Title Available';
+				}
+			} else {
+				currentArtist = 'Unknown Artist';
+				currentTitle = 'No Stream Data Available';
+			}
+		} catch (error) {
+			console.error('Error fetching now playing data:', error);
+			currentArtist = 'Error';
+			currentTitle = 'Failed to load song info';
+		}
+	}
 
 	function decreaseVolume() {
 		volume = Math.max(0, volume - 0.1);
@@ -54,6 +99,9 @@
 			totalListener = total;
 		});
 
+		fetchNowPlaying();
+		fetchInterval = setInterval(fetchNowPlaying, 10000); // 10 detik
+
 		window.addEventListener('beforeunload', () => {
 			socket.disconnect();
 		});
@@ -61,6 +109,8 @@
 
 	onDestroy(() => {
 		socket.disconnect();
+		// Bersihkan interval saat komponen dihancurkan untuk menghindari memory leaks
+		clearInterval(fetchInterval);
 	});
 </script>
 
@@ -68,11 +118,15 @@
 ></audio>
 
 <div class="relative h-svh w-full bg-[url('/backgrounds/bg2.png')] bg-cover bg-center text-white">
-	<!-- Header -->
 	<div class="absolute left-0 top-0 z-10 h-svh w-full bg-black/40 p-9 pt-5"></div>
 
 	<div class="absolute left-0 top-0 z-20 flex h-full w-full flex-col justify-evenly p-10 pt-5">
-		<div class="flex justify-end">
+		<div class="flex justify-between">
+			<div class="flex items-center gap-1">
+				<img src="/icons/online-user.svg" alt="Pendengar" />
+				<h1>{totalListener}</h1>
+			</div>
+
 			<h1 class="text-end text-xs font-semibold sm:block">Copyright © PT Skytel Indonesia</h1>
 		</div>
 
@@ -86,6 +140,11 @@
 			<h1 class="text-center text-[1.5rem] font-extrabold sm:text-[2rem] sm:font-bold">
 				Radio Al-Ikhwan 101,9 FM Makassar
 			</h1>
+
+			<div class="text-center">
+				<h2 class="text-xl font-bold">{currentTitle}</h2>
+				<p class="text-lg">{currentArtist}</p>
+			</div>
 
 			<div class="mb-3 flex gap-4">
 				<a href="https://www.facebook.com/RadioAlikhwanMakassar?locale=id_ID" target="_blank">
@@ -106,10 +165,8 @@
 			</div>
 		</div>
 
-		<!-- Konten Utama -->
 		<div class="flex w-full items-end">
 			<div class="flex w-full flex-col gap-5">
-				<!-- Kontrol Volume -->
 				<div class="flex w-full items-center justify-between gap-3">
 					<button onmousedown={decreaseVolume}>
 						<img src="/icons/volumedown.svg" class="w-10" alt="Volume Turun" />
@@ -129,7 +186,6 @@
 					</button>
 				</div>
 
-				<!-- Kontrol Pemutar -->
 				<div class="mb-3 flex w-full items-center justify-between px-1">
 					<a href="https://radioalikhwan.com/">
 						<img src="/icons/leave.svg" class="w-5" alt="Keluar" />
@@ -161,11 +217,6 @@
 						<a href="https://wa.link/ahx3qj" target="_blank">
 							<img src="/icons/whatsapp.svg" alt="" />
 						</a>
-
-						<div class="flex items-center gap-1">
-							<img src="/icons/online-user.svg" alt="Pendengar" />
-							<h1>{totalListener}</h1>
-						</div>
 					</div>
 				</div>
 			</div>
