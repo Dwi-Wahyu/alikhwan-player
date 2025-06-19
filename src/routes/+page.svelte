@@ -64,7 +64,8 @@
 	});
 </script>
 
-<audio bind:this={audioElement} src="https://a7.alhastream.com:4190/radio"></audio>
+<audio bind:this={audioElement} src="https://stream.radioalikhwan.com/listen/al_ikhwan_fm/raifm"
+></audio>
 
 <div class="relative h-svh w-full bg-[url('/backgrounds/bg2.png')] bg-cover bg-center text-white">
 	<!-- Header -->
