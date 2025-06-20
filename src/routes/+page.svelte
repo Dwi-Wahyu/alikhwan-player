@@ -46,8 +46,8 @@
 						currentTitle = mainSource.yp_currently_playing;
 					}
 				} else {
-					currentArtist = 'Unknown Artist';
-					currentTitle = 'No Title Available';
+					currentArtist = '';
+					currentTitle = 'Siaran Studio';
 				}
 			} else {
 				currentArtist = 'Unknown Artist';
