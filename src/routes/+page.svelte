@@ -19,8 +19,10 @@
 	async function fetchNowPlaying() {
 		try {
 			const response = await fetch(
-				'https://stream.radioalikhwan.com/listen/al_ikhwan_fm/status-json.xsl'
+				// 'https://stream.radioalikhwan.com/listen/al_ikhwan_fm/status-json.xsl'
+				'https://stream.radioalikhwan.com/listen/rai_fm_stream/status-json.xsl'
 			);
+
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
@@ -114,7 +116,7 @@
 	});
 </script>
 
-<audio bind:this={audioElement} src="https://stream.radioalikhwan.com/listen/al_ikhwan_fm/raifm"
+<audio bind:this={audioElement} src="https://stream.radioalikhwan.com/listen/rai_fm_stream/1"
 ></audio>
 
 <div class="relative h-svh w-full bg-[url('/backgrounds/bg2.png')] bg-cover bg-center text-white">
