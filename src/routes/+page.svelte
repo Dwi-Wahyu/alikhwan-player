@@ -20,13 +20,39 @@
 		try {
 			const response = await fetch(
 				// 'https://stream.radioalikhwan.com/listen/al_ikhwan_fm/status-json.xsl'
-				'https://stream.radioalikhwan.com/listen/rai_fm_stream/status-json.xsl'
+				// 'https://stream.radioalikhwan.com/listen/rai_fm_stream/status-json.xsl'
+				'https://a7.alhastream.com:4190/status-json.xsl'
 			);
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const data = await response.json();
+
+			if (data.icestats && data.icestats.source) {
+				const mainSource = data.icestats.source;
+				if (mainSource.artist && mainSource.title) {
+					currentArtist = mainSource.artist;
+					currentTitle = mainSource.title;
+					return;
+				} else if (mainSource.yp_currently_playing) {
+					// Fallback jika artist dan title terpisah tidak ada, gunakan yp_currently_playing
+					const parts = mainSource.yp_currently_playing.split(' - ');
+					if (parts.length >= 2) {
+						currentArtist = parts[0];
+						currentTitle = parts.slice(1).join(' - ');
+						return;
+					} else {
+						currentArtist = 'Unknown Artist';
+						currentTitle = mainSource.yp_currently_playing;
+						return;
+					}
+				} else {
+					currentArtist = '';
+					currentTitle = 'Siaran Studio';
+					return;
+				}
+			}
 
 			// Pastikan data yang kita butuhkan ada
 			if (data.icestats && data.icestats.source && data.icestats.source.length > 0) {
@@ -116,8 +142,8 @@
 	});
 </script>
 
-<audio bind:this={audioElement} src="https://stream.radioalikhwan.com/listen/rai_fm_stream/1"
-></audio>
+<!-- <audio bind:this={audioElement} src="https://stream.radioalikhwan.com/listen/rai_fm_stream/1" -->
+<audio bind:this={audioElement} src="https://a7.alhastream.com:4190/radio"></audio>
 
 <div class="relative h-svh w-full bg-[url('/backgrounds/bg2.png')] bg-cover bg-center text-white">
 	<div class="absolute left-0 top-0 z-10 h-svh w-full bg-black/40 p-9 pt-5"></div>
